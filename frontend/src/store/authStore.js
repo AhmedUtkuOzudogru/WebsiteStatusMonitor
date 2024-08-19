@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import axios from "axios";
-import dotenv from 'dotenv';
-require('dotenv').config({path:'../../.env'});
-const apiUrl =process.env.API_URL||"http://localhost:5000"
+
+const apiUrl ="http://localhost:5000"
 
 axios.defaults.withCredentials = true;
 
