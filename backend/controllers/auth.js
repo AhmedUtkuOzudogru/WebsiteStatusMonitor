@@ -74,7 +74,8 @@ export const verifyEmail = async (req, res) => {
         console.log("error in verifyEmail ", error);
         res.status(500).json({ success: false, message: "Server error" });
     }
-};export const login = async (req, res) => {
+};
+export const login = async (req, res) => {
     const { email, password } = req.body;
     try {
         if(!email || !password){

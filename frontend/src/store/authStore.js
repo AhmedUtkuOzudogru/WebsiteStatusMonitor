@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import axios from "axios";
-
+//TODO Change when deploying dev
 const apiUrl ="http://localhost:5000"
 
 axios.defaults.withCredentials = true;

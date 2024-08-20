@@ -26,7 +26,10 @@ const userSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
-    },
+    },domains: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Website',
+    }],
     resetPasswordToken:String,
     resetPasswordExpires:Date,
     verificationToken:String,

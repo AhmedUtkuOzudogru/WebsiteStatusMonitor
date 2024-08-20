@@ -5,9 +5,11 @@ import path from 'path'
 import cookieParser from 'cookie-parser';
 
 import authRoutes from "./routes/auth.js";
+import websiteRoutes from "./routes/website.js";
 
 import { connectDB } from "./db/connectDB.js";
 import { startCleanupService } from './utils/cleanupService.js';
+import { scheduledEmailUpdate } from './utils/scheduledEmailUpdate.js';
 
 dotenv.config();
 
@@ -15,12 +17,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 
-
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
 app.use(express.json()); // Parse JSON bodies
 app.use(cookieParser()); // Parse cookies
 app.use('/api/auth', authRoutes);
+app.use('/api/websites', websiteRoutes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "/frontend/dist")));
@@ -33,5 +35,6 @@ if (process.env.NODE_ENV === "production") {
 app.listen(PORT, () => {
   connectDB();
   startCleanupService();  // Start the cleanup service
+  scheduledEmailUpdate();
   console.log('Server is running on port', PORT);
 });
