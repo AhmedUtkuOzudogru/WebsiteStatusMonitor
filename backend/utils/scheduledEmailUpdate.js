@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import { updateUserWebsitesStatus } from './websiteStatusChecker.js';
 import { User } from '../models/user.js';
-
+//TODO Send warning email if the website is down for more than 1 hour
 export const scheduledEmailUpdate = () => {
 
     cron.schedule('1 * * * *', async () => {

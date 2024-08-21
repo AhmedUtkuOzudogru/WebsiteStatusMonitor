@@ -12,6 +12,12 @@ export const addWebsite = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
+        // Check if the website already exists in the user's domains array
+        const existingWebsite = await Website.findOne({ domainName, user: userId });
+        if (existingWebsite) {
+            return res.status(400).json({ success: false, message: "Website already exists" });
+        }
+
         const website = new Website({
             domainName,
             user: userId
@@ -23,12 +29,13 @@ export const addWebsite = async (req, res) => {
         user.domains.push(website._id);
         await user.save();
 
+        await updateUserWebsitesStatus(userId);
+
         res.status(201).json({ success: true, message: "Website added successfully", website });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }
 };
-
 export const getUserWebsites = async (req, res) => {
     try {
         const userId = req.userId;
