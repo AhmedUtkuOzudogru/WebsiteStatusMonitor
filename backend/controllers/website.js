@@ -55,6 +55,16 @@ export const updateUserWebsites = async (req, res) => {
     }
 };
 
+export const getLatestWebsiteUpdates = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const updatedWebsites = await Website.find({ user: userId, updatedAt: { $gte: new Date(Date.now() - 60000) } }); // Get websites updated in the last minute
+        res.status(200).json({ success: true, websites: updatedWebsites });
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
 export const deleteWebsite = async (req, res) => {
     try {
         const { websiteId } = req.params;
