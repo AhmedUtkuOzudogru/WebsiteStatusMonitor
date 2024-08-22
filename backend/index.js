@@ -9,7 +9,7 @@ import websiteRoutes from "./routes/website.js";
 
 import { connectDB } from "./db/connectDB.js";
 import { startCleanupService } from './utils/cleanupService.js';
-import { scheduledEmailUpdate } from './utils/scheduledEmailUpdate.js';
+import { scheduledWebsiteStatusUpdate } from './utils/scheduledWebsiteStatusUpdate.js';
 
 dotenv.config();
 
@@ -35,6 +35,6 @@ if (process.env.NODE_ENV === "production") {
 app.listen(PORT, () => {
   connectDB();
   startCleanupService();  // Start the cleanup service
-  scheduledEmailUpdate();
+  scheduledWebsiteStatusUpdate(); // Start the scheduled website status update
   console.log('Server is running on port', PORT);
 });

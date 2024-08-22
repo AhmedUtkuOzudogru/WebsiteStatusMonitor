@@ -3,6 +3,7 @@ import http from 'http';
 import dns from 'dns';
 import { Website } from '../models/website.js';
 import {User} from "../models/user.js";
+import sslChecker from "ssl-checker";
 
 const followRedirects = async (url, protocol, redirectCount = 0) => {
     if (redirectCount > 5) {
@@ -45,40 +46,24 @@ export const checkWebsiteStatus = async (website) => {
             });
         });
 
-        // If DNS resolves, check if the website is accessible
+        // If DNS resolves, check SSL status using ssl-checker
         if (website.isAvailable !== false) {
             try {
-                const res = await followRedirects(`https://${website.domainName}`, 'https:');
+                const sslData = await sslChecker(website.domainName, { method: 'GET', port: 443, validateSubjectAltName: true });
+
                 website.isAvailable = true;
 
-                if (res.socket.encrypted) {
-                    const cert = res.socket.getPeerCertificate();
-                    if (cert && cert.valid_to) {
-                        website.sslStatus = 'Valid';
-                        website.expiryDate = new Date(cert.valid_to);
-                    } else {
-                        website.sslStatus = 'Invalid or Not Found';
-                        website.expiryDate = null;
-                    }
+                if (sslData.valid) {
+                    website.sslStatus = 'Valid';
+                    website.expiryDate = new Date(sslData.validTo); // Adjust according to response format
                 } else {
-                    website.sslStatus = 'Not Secure (HTTP)';
+                    website.sslStatus = 'Invalid or Not Found';
                     website.expiryDate = null;
                 }
             } catch (error) {
-                if (error.message === 'Too many redirects') {
-                    website.isAvailable = true;
-                    website.sslStatus = 'Too Many Redirects';
-                } else {
-                    // If HTTPS fails, try HTTP as a fallback
-                    try {
-                        await followRedirects(`http://${website.domainName}`, 'http:');
-                        website.isAvailable = true;
-                        website.sslStatus = 'Not Secure (HTTP)';
-                    } catch (httpError) {
-                        website.isAvailable = false;
-                        website.sslStatus = 'Not Accessible';
-                    }
-                }
+                console.error(`Error checking SSL status for ${website.domainName}:`, error);
+                website.isAvailable = false;
+                website.sslStatus = 'Error Checking';
                 website.expiryDate = null;
             }
         }
@@ -92,6 +77,7 @@ export const checkWebsiteStatus = async (website) => {
     website.lastChecked = new Date();
     await website.save();
 };
+
 export const updateUserWebsitesStatus = async (userId) => {
     const user = await User.findById(userId).populate('domains');
     if (!user) {

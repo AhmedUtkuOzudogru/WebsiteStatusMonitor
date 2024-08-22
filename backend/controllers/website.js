@@ -1,5 +1,5 @@
 import { Website } from "../models/website.js";
-import {updateUserWebsitesStatus} from "../utils/websiteStatusChecker.js";
+import {checkWebsiteStatus, updateUserWebsitesStatus} from "../utils/websiteStatusChecker.js";
 import {User} from "../models/user.js";
 
 export const addWebsite = async (req, res) => {
@@ -36,6 +36,7 @@ export const addWebsite = async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 };
+
 export const getUserWebsites = async (req, res) => {
     try {
         const userId = req.userId;
@@ -45,6 +46,7 @@ export const getUserWebsites = async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 };
+
 export const updateUserWebsites = async (req, res) => {
     try {
         const userId = req.userId;
@@ -80,6 +82,23 @@ export const deleteWebsite = async (req, res) => {
         await User.findByIdAndUpdate(userId, { $pull: { domains: websiteId } });
 
         res.status(200).json({ success: true, message: "Website deleted successfully" });
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+};
+
+export const getWebsiteStatus = async (req, res) => {
+    try {
+        const { websiteId } = req.params;
+        const userId = req.userId;
+
+        const website = await Website.findOne({ _id: websiteId, user: userId });
+
+        if (!website) {
+            return res.status(404).json({ success: false, message: "Website not found" });
+        }
+        await checkWebsiteStatus(website);
+        res.status(200).json({ success: true, website });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }
