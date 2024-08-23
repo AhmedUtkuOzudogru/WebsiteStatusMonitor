@@ -25,7 +25,7 @@ const ProtectedRoute = ({children}) => {
 const RedirectAuthenticatedUser = ({children}) => {
     const {isAuthenticated,user} = useAuthStore();
     if (isAuthenticated && user.isVerified) {
-        return <Navigate to="/" replace/>
+        return <Navigate to="/dashboard" replace/>
     }
     return children;
 };
@@ -49,7 +49,7 @@ function App() {
                 <BackgroundShape color='bg-emerald-500' size='w-48 h-48' top='70%' left='80%' delay={5} />
                 <BackgroundShape color='bg-red-500' size='w-32 h-32' top='40%' left='-10%' delay={2} />
                 <Routes>
-                    <Route path="/" element={
+                    <Route path="/dashboard" element={
                     <ProtectedRoute>
                         <Dashboard />
                     </ProtectedRoute>

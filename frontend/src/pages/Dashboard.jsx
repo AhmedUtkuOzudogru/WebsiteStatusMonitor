@@ -3,6 +3,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
 import Sidebar from '../components/Sidebar';
+import {Loader} from "lucide-react";
 
 const Dashboard = () => {
     const [websites, setWebsites] = useState([]);
@@ -85,13 +86,28 @@ const Dashboard = () => {
                 <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
                     Dashboard
                 </h2>
-                <div className="text-center">Loading...</div>
+                 <Loader className='animate-spin mx-auto' size={24} />
             </motion.div>
         );
     }
 
     if (!websites || websites.length === 0) {
-        return <div>No websites available</div>;
+        return (
+            <div className="flex">
+                <Sidebar onRefresh={fetchLatestWebsiteUpdates} onAdd={handleAddWebsite} onDelete={handleDeleteWebsite} />
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="max-w-7xl w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl p-8 ml-20"
+                >
+                    <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
+                        Dashboard
+                    </h2>
+                    <div>No websites available</div>
+                </motion.div>
+            </div>
+        );
     }
 
     return (
