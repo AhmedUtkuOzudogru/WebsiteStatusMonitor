@@ -2,60 +2,31 @@ import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
+import {useWebsiteFunctions} from "../hooks/useWebsiteFunctions.js";
 import Sidebar from '../components/Sidebar';
 import {Loader} from "lucide-react";
 
 const Dashboard = () => {
-    const [websites, setWebsites] = useState([]);
-    const [loading, setLoading] = useState(true);
+    //const [loading, setLoading] = useState(true);
+    const {websites,fetchWebsites,updateAndFetchWebsites,error,isLoading} = useWebsiteFunctions();
     const { user, logout } = useAuthStore();
 
     const handleLogout = () => {
         logout();
     };
 
-    const fetchWebsites = useCallback(async () => {
-        try {
-            const response = await axios.get('http://localhost:5000/api/websites/user-websites', {
-                params: {
-                    userId: user.id
-                }
-            });
-            setWebsites(response.data.websites);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching websites:', error);
-            setWebsites([]);
-            setLoading(false);
-        }
-    }, [user]);
-
-    const fetchLatestWebsiteUpdates = useCallback(async () => {
-        try {
-            const response = await axios.post('http://localhost:5000/api/websites/update-status', {
-                params: {
-                    userId: user.id
-                }
-            });
-            await fetchWebsites();
-
-        } catch (error) {
-            console.error('Error fetching website updates:', error);
-        }
-    }, [user]);
-
-    const handleAddWebsite = () => {
-        // Implement add website logic
-    };
-
-    const handleDeleteWebsite = () => {
-        // Implement delete website logic
-    };
+    useEffect(() => {
+        fetchWebsites();
+    }, [fetchWebsites]);
 
     useEffect(() => {
-        const interval = setInterval(fetchLatestWebsiteUpdates, 60000); // Check for updates every minute
+        const interval = setInterval(updateAndFetchWebsites, 120000); // Check for updates every 2 minutes
         return () => clearInterval(interval);
-    }, [fetchWebsites, fetchLatestWebsiteUpdates]);
+    }, [updateAndFetchWebsites]);
+
+    const handleRefresh = () => {
+        updateAndFetchWebsites();
+    };
 
     const getCellColor = (value, type) => {
         switch (type) {
@@ -75,7 +46,7 @@ const Dashboard = () => {
         return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     };
 
-    if (loading) {
+    if (isLoading) {
         return (
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -94,7 +65,7 @@ const Dashboard = () => {
     if (!websites || websites.length === 0) {
         return (
             <div className="flex">
-                <Sidebar onRefresh={fetchLatestWebsiteUpdates} onAdd={handleAddWebsite} onDelete={handleDeleteWebsite} />
+                <Sidebar  />
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -112,7 +83,7 @@ const Dashboard = () => {
 
     return (
         <div className="flex">
-            <Sidebar onRefresh={fetchLatestWebsiteUpdates} onAdd={handleAddWebsite} onDelete={handleDeleteWebsite} />
+            <Sidebar  />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
