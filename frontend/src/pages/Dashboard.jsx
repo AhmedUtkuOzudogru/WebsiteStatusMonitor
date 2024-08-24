@@ -1,19 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import axios from 'axios';
+import  { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
-import {useWebsiteFunctions} from "../hooks/useWebsiteFunctions.js";
+import { useWebsiteFunctions } from "../hooks/useWebsiteFunctions.js";
 import Sidebar from '../components/Sidebar';
-import {Loader} from "lucide-react";
+import { Loader } from "lucide-react";
 
 const Dashboard = () => {
-    //const [loading, setLoading] = useState(true);
-    const {websites,fetchWebsites,updateAndFetchWebsites,error,isLoading} = useWebsiteFunctions();
-    const { user, logout } = useAuthStore();
-
-    const handleLogout = () => {
-        logout();
-    };
+    const { websites, fetchWebsites, updateAndFetchWebsites, error, isLoading } = useWebsiteFunctions();
+    const { logout } = useAuthStore();
 
     useEffect(() => {
         fetchWebsites();
@@ -28,6 +22,14 @@ const Dashboard = () => {
         updateAndFetchWebsites();
     };
 
+    const formatDateTime = (dateString) => {
+        const date = new Date(dateString);
+        return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    };
+
+    if (isLoading) {
+        return <div className="flex justify-center items-center h-screen"><Loader className='animate-spin' size={24} /></div>;
+    }
     const getCellColor = (value, type) => {
         switch (type) {
             case 'sslStatus':
@@ -41,49 +43,10 @@ const Dashboard = () => {
         }
     };
 
-    const formatDateTime = (dateString) => {
-        const date = new Date(dateString);
-        return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-    };
-
-    if (isLoading) {
-        return (
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl p-8 ml-20"
-            >
-                <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
-                    Dashboard
-                </h2>
-                 <Loader className='animate-spin mx-auto' size={24} />
-            </motion.div>
-        );
-    }
-
-    if (!websites || websites.length === 0) {
-        return (
-            <div className="flex">
-                <Sidebar  />
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="max-w-7xl w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl p-8 ml-20"
-                >
-                    <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
-                        Dashboard
-                    </h2>
-                    <div>No websites available</div>
-                </motion.div>
-            </div>
-        );
-    }
 
     return (
         <div className="flex">
-            <Sidebar  />
+            <Sidebar />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -118,10 +81,20 @@ const Dashboard = () => {
                     </table>
                 </div>
                 <motion.button
+                    whileHover={{scale: 1.05}}
+                    whileTap={{scale: 0.95}}
+                    onClick={handleRefresh}
+                    className='w-full mt-4 py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white
+                    font-bold rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-700
+                    focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900'
+                >
+                    Refresh
+                </motion.button>
+                <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={handleLogout}
-                    className='w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white
+                    onClick={logout}
+                    className='w-full mt-4 py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white
                     font-bold rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700
                     focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900'
                 >
