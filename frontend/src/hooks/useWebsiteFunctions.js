@@ -55,11 +55,33 @@ export const useWebsiteFunctions = () => {
     }, [updateWebsiteStatus, fetchWebsites]);
 
     const addWebsite = useCallback(async (website) => {
-        //Todo Implement add website logic
+        setIsLoading(true);
+        setError(null);
+        try {
+            await axios.post(`${apiUrl}/api/websites/add`, {
+                domainName: website.domainName
+            });
+            await fetchWebsites();
+        } catch (error) {
+            setError(error.response?.data?.message || "Error adding website");
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
     const deleteWebsite = useCallback(async (websiteId) => {
-        //Todo Implement delete website logic
+        setIsLoading(true);
+        setError(null);
+        try {
+            await axios.delete(`${apiUrl}/api/websites/${websiteId}`, {
+                websiteId:websiteId
+            });
+            await fetchWebsites();
+        } catch (error) {
+            setError(error.response?.data?.message || "Error deleting website");
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
     return {

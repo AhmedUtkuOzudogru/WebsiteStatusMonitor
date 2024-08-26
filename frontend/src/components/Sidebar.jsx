@@ -21,6 +21,13 @@ const Sidebar = () => {
     const goToDashboard = () => {
         navigate('/dashboard');
     };
+    const goToAddWebsite = () => {
+        navigate('/add-website');
+    };
+
+    const goToDeleteWebsite = () => {
+        navigate('/delete-website');
+    };
 
     return (
         <motion.div
@@ -61,13 +68,13 @@ const Sidebar = () => {
                     {isExpanded ? 'Refresh' : <FolderSync />}
                 </button>
                 <button
-                  //  onClick={onAdd}
+                    onClick={goToAddWebsite}
                     className={`bg-blue-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Add Website' : <Plus />}
                 </button>
                 <button
-                //    onClick={onDelete}
+                    onClick={goToDeleteWebsite}
                     className={`bg-red-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Delete Website' : <Trash />}
@@ -82,7 +89,7 @@ const Sidebar = () => {
                 </button>
 
                 <button
-                    //onClick={handleLogout}
+                    onClick={handleLogout}
                     className={`bg-rose-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Logout' : <LogOut/>}

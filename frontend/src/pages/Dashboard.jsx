@@ -1,4 +1,4 @@
-import  { useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
 import { useWebsiteFunctions } from "../hooks/useWebsiteFunctions.js";
@@ -28,8 +28,16 @@ const Dashboard = () => {
     };
 
     if (isLoading) {
-        return <div className="flex justify-center items-center h-screen"><Loader className='animate-spin' size={24} /></div>;
+        return (
+            <div className="flex">
+                <Sidebar/>
+                <div className="flex justify-center items-center h-screen">
+                    <Loader className='animate-spin' size={24}/>
+                </div>
+            </div>
+        )
     }
+
     const getCellColor = (value, type) => {
         switch (type) {
             case 'sslStatus':
@@ -43,14 +51,13 @@ const Dashboard = () => {
         }
     };
 
-
     return (
         <div className="flex">
-            <Sidebar />
+            <Sidebar/>
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                initial={{opacity: 0, y: 20}}
+                animate={{opacity: 1, y: 0}}
+                transition={{duration: 0.5}}
                 className="max-w-7xl w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl p-8 ml-20"
             >
                 <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">

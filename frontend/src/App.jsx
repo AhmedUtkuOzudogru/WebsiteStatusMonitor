@@ -10,6 +10,8 @@ import EmailVerification from "./pages/EmailVerification.jsx";
 import {Toaster} from "react-hot-toast";
 import {useAuthStore} from "./store/authStore.js";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import AddWebsite from "./pages/AddWebsite.jsx";
+import DeleteWebsite from "./pages/DeleteWebsite.jsx";
 
 const ProtectedRoute = ({children}) => {
     const {isAuthenticated,user} = useAuthStore();
@@ -52,6 +54,18 @@ function App() {
                     <Route path="/dashboard" element={
                     <ProtectedRoute>
                         <Dashboard />
+                    </ProtectedRoute>
+                    }
+                    />
+                    <Route path="/add-website" element={
+                    <ProtectedRoute>
+                        <AddWebsite />
+                    </ProtectedRoute>
+                    }
+                    />
+                    <Route path="/delete-website" element={
+                    <ProtectedRoute>
+                        <DeleteWebsite />
                     </ProtectedRoute>
                     }
                     />
