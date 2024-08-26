@@ -5,6 +5,7 @@ import  crypto from "crypto";
 import {User} from "../models/user.js";
 import {generateTokenAndSetCookie} from "../utils/generateTokenAndSetCookie.js";
 import {sendPasswordResetEmail, sendResetPasswordSuccessEmail, sendVerificationEmail} from "../utils/emailService.js";
+import {Website} from "../models/website.js";
 
 //TODO !!!!! if user changes the email, and becomes unverified there might be a change that cleanupService might delete
 // the user because it is unverified and created before 12 hour mark. Resolve this issue before deployment
@@ -256,6 +257,8 @@ export const changeEmail = async (req, res) => {
 
         await sendVerificationEmail(newEmail, verificationToken, user.username);
 
++       res.clearCookie("token");
+
         res.status(200).json({
             success: true,
             message: "Email updated successfully. Please check your new email for verification.",
@@ -266,6 +269,30 @@ export const changeEmail = async (req, res) => {
         });
     } catch (error) {
         console.log("Error changing email", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+export const deleteAccount = async (req, res) => {
+    try {
+        const userId = req.userId;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        await Website.deleteMany({ user: userId });
+
+        await User.findByIdAndDelete(userId);
+
+        res.clearCookie("token");
+
+        res.status(200).json({
+            success: true,
+            message: "Account deleted successfully"
+        });
+    } catch (error) {
+        console.log("Error deleting account", error);
         res.status(500).json({ success: false, message: "Server error" });
     }
 };

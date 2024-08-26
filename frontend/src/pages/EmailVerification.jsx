@@ -9,7 +9,7 @@ const EmailVerification = () => {
     const [code, setCode] = useState(["", "", "", "", "", ""]), [isCodeComplete,
             setIsCodeComplete] = useState(false),
         inputRef = useRef([]), navigate = useNavigate();
-    const {error, isLoading, verifyEmail,user} = useAuthStore();
+    const {error, isLoading, verifyEmail,user,logout} = useAuthStore();
 
     useEffect(() => {
         const handlePaste = (e) => {
@@ -81,7 +81,8 @@ const EmailVerification = () => {
         e.preventDefault();
         try {
             await verifyEmail(code.join(""));
-            navigate("/");
+            logout();
+            navigate("/login");
             toast.success("Email verified successfully");
         } catch (error) {
             toast.error(error.message || "Error verifying email");

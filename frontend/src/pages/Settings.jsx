@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import { motion } from 'framer-motion';
 import { useAuthStore } from '../store/authStore';
 import Sidebar from '../components/Sidebar';
@@ -13,6 +14,7 @@ const Settings = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
+    const navigate = useNavigate();
 
     const [isUsernameDialogOpen, setIsUsernameDialogOpen] = useState(false);
     const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
@@ -30,7 +32,8 @@ const Settings = () => {
         setError(null);
         setMessage(null);
         try {
-            //Todo: Change username
+            await axios.put(`${apiUrl}/api/auth/change-username`, { newUsername });
+            setMessage("Username changed successfully");
         } catch (error) {
             setError(error.response?.data?.message || "Error changing username");
         } finally {
@@ -44,7 +47,10 @@ const Settings = () => {
         setError(null);
         setMessage(null);
         try {
-            //Todo: Request email change
+            await axios.put(`${apiUrl}/api/auth/change-email`, { newEmail });
+            setMessage("Email change requested successfully. Please verify your new email.");
+            logout();
+            navigate('/verify-email');
         } catch (error) {
             setError(error.message || "Error requesting email change");
         } finally {
@@ -58,7 +64,9 @@ const Settings = () => {
         setError(null);
         setMessage(null);
         try {
-            //Todo: Change password
+            //TODO:  Might implement Change password in the backend, also can use the same function as reset password
+            await axios.post(`${apiUrl}/api/auth/change-password`, { currentPassword, newPassword, confirmPassword });
+            setMessage("Password changed successfully");
         } catch (error) {
             setError(error.response?.data?.message || "Error changing password");
         } finally {
@@ -72,8 +80,9 @@ const Settings = () => {
             setError(null);
             setMessage(null);
             try {
-                //Todo: Delete account
+                await axios.delete(`${apiUrl}/api/auth/delete-account`);
                 logout();
+                setMessage("Account deleted successfully");
             } catch (error) {
                 setError(error.response?.data?.message || "Error deleting account");
             } finally {

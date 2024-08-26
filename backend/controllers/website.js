@@ -12,7 +12,6 @@ export const addWebsite = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // Check if the website already exists in the user's domains array
         const existingWebsite = await Website.findOne({ domainName, user: userId });
         if (existingWebsite) {
             return res.status(400).json({ success: false, message: "Website already exists" });
@@ -25,7 +24,6 @@ export const addWebsite = async (req, res) => {
 
         await website.save();
 
-        // Update user's domains array
         user.domains.push(website._id);
         await user.save();
 
