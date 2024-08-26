@@ -6,6 +6,9 @@ import {User} from "../models/user.js";
 import {generateTokenAndSetCookie} from "../utils/generateTokenAndSetCookie.js";
 import {sendPasswordResetEmail, sendResetPasswordSuccessEmail, sendVerificationEmail} from "../utils/emailService.js";
 
+//TODO !!!!! if user changes the email, and becomes unverified there might be a change that cleanupService might delete
+// the user because it is unverified and created before 12 hour mark. Resolve this issue before deployment
+
 export const signup = async (req, res) => {
     const { email, password, username } = req.body;
     try {
@@ -61,7 +64,7 @@ export const verifyEmail = async (req, res) => {
         user.verificationTokenExpires = undefined;
         await user.save();
         // TODO sendWelcomeEmail function
-        // await sendWelcomeEmail(user.email, user.username);
+        //  await sendWelcomeEmail(user.email, user.username);
         res.status(200).json({
             success: true,
             message: "Email verified successfully",
@@ -189,3 +192,80 @@ export const logout = async (req, res) => {
     res.clearCookie("token");
     res.status(200).json({success: true, message: "Logged out successfully"});
 }
+export const changeUsername = async (req, res) => {
+    try {
+        const { newUsername } = req.body;
+        const userId = req.userId;
+
+        if (!newUsername) {
+            return res.status(400).json({ success: false, message: "New username is required" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const usernameExists = await User.findOne({ username: newUsername });
+        if (usernameExists) {
+            return res.status(400).json({ success: false, message: "Username is already taken" });
+        }
+
+        user.username = newUsername;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Username updated successfully",
+            user: {
+                ...user._doc,
+                password: undefined
+            }
+        });
+    } catch (error) {
+        console.log("Error changing username", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+export const changeEmail = async (req, res) => {
+    try {
+        const { newEmail } = req.body;
+        const userId = req.userId;
+
+        if (!newEmail) {
+            return res.status(400).json({ success: false, message: "New email is required" });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        const emailExists = await User.findOne({ email: newEmail });
+        if (emailExists) {
+            return res.status(400).json({ success: false, message: "Email is already in use" });
+        }
+
+        user.email = newEmail;
+        user.isVerified = false;
+        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+        user.verificationToken = verificationToken;
+        user.verificationTokenExpires = Date.now() + 12*60*60*1000; // 12 hours
+
+        await user.save();
+
+        await sendVerificationEmail(newEmail, verificationToken, user.username);
+
+        res.status(200).json({
+            success: true,
+            message: "Email updated successfully. Please check your new email for verification.",
+            user: {
+                ...user._doc,
+                password: undefined
+            }
+        });
+    } catch (error) {
+        console.log("Error changing email", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
