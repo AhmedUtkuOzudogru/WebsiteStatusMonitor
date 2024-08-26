@@ -14,7 +14,6 @@ const Sidebar = () => {
     };
 
     const toggleSidebar = () => {
-        console.log("Toggle clicked, current state:", isExpanded);
         setIsExpanded(!isExpanded);
     };
 
