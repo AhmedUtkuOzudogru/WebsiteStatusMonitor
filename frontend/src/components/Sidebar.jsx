@@ -29,6 +29,10 @@ const Sidebar = () => {
         navigate('/delete-website');
     };
 
+    const goToSettings = () => {
+        navigate('/settings');
+    };
+
     return (
         <motion.div
             animate={{ width: isExpanded ? 250 : 60 }}
@@ -42,7 +46,7 @@ const Sidebar = () => {
 
             <motion.button
                 onClick={toggleSidebar}
-                className="p-4 focus:outline-none bg-fuchsia-400 absolute"
+                className="p-4 focus:outline-none bg-neutral-400 absolute"
                 style={{
                     top: '50%',
                     transform: 'translateY(-50%)',
@@ -57,25 +61,25 @@ const Sidebar = () => {
             <div className="flex flex-col mt-10 space-y-4 flex-grow">
                 <button
                     onClick={goToDashboard}
-                    className={`bg-yellow-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
+                    className={`bg-gray-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Dashboard' : <Home />}
                 </button>
                 <button
                     // onClick={onRefresh}
-                    className={`bg-green-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
+                    className={`bg-gray-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Refresh' : <FolderSync />}
                 </button>
                 <button
                     onClick={goToAddWebsite}
-                    className={`bg-blue-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
+                    className={`bg-gray-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Add Website' : <Plus />}
                 </button>
                 <button
                     onClick={goToDeleteWebsite}
-                    className={`bg-red-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
+                    className={`bg-gray-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Delete Website' : <Trash />}
                 </button>
@@ -83,6 +87,7 @@ const Sidebar = () => {
 
             <div className="mb-4 flex flex-col space-y-4">
                 <button
+                    onClick={goToSettings}
                     className={`bg-gray-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Settings' : <Settings/>}
@@ -90,7 +95,7 @@ const Sidebar = () => {
 
                 <button
                     onClick={handleLogout}
-                    className={`bg-rose-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
+                    className={`bg-red-500 text-white p-2 rounded-lg shadow-lg flex items-center justify-center ${isExpanded ? 'w-44' : 'w-12'}`}
                 >
                     {isExpanded ? 'Logout' : <LogOut/>}
                 </button>

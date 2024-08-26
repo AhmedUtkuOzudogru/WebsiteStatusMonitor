@@ -7,11 +7,12 @@ import Login from "./pages/Login.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import EmailVerification from "./pages/EmailVerification.jsx";
-import {Toaster} from "react-hot-toast";
-import {useAuthStore} from "./store/authStore.js";
 import ResetPassword from "./pages/ResetPassword.jsx";
 import AddWebsite from "./pages/AddWebsite.jsx";
 import DeleteWebsite from "./pages/DeleteWebsite.jsx";
+import Settings from "./pages/Settings.jsx";
+import {Toaster} from "react-hot-toast";
+import {useAuthStore} from "./store/authStore.js";
 
 const ProtectedRoute = ({children}) => {
     const {isAuthenticated,user} = useAuthStore();
@@ -69,6 +70,12 @@ function App() {
                     </ProtectedRoute>
                     }
                     />
+                    <Route path="/settings" element={
+                    <ProtectedRoute>
+                        <Settings />
+                    </ProtectedRoute>
+                    }
+                    />
                     <Route path="/signup"
                            element={
                         <RedirectAuthenticatedUser>
@@ -98,6 +105,7 @@ function App() {
                         </RedirectAuthenticatedUser>
                         }
                     />
+                    <Route path="*" element={<Navigate to="/login" replace />} />
                 </Routes>
                 <Toaster />
             </div>
