@@ -27,6 +27,16 @@ const Dashboard = () => {
         return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
     };
 
+    if(websites.length === 0) {
+        return (
+            <div className="flex">
+                <Sidebar/>
+                <div className="flex justify-center items-center h-screen">
+                    <p className="text-2xl text-center">No websites found. Add a website to get started.</p>
+                </div>
+            </div>
+        )
+    }
     if (isLoading) {
         return (
             <div className="flex">

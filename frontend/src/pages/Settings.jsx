@@ -89,10 +89,12 @@ const Settings = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="max-w-2xl w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl p-8 ml-20"
+                className="max-w-6xl w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl
+                shadow-xl p-8 ml-20"
             >
-                <h2 className="text-6xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-pink-500 text-transparent bg-clip-text">
-                    Settings
+                <h2 className="text-6xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-pink-500
+                text-transparent bg-clip-text leading-tight pb-2 ">
+                        Settings
                 </h2>
 
                 <div className="mb-6">
