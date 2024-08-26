@@ -5,16 +5,20 @@ import { useAuthStore } from '../store/authStore';
 import Sidebar from '../components/Sidebar';
 import Dialog from '../components/Dialog';
 import { Loader, Edit2 } from "lucide-react";
-import axios from 'axios';
-
-const apiUrl = "http://localhost:5000";
+import { useWebsiteFunctions } from '../hooks/useWebsiteFunctions';
 
 const Settings = () => {
-    const { user, logout } = useAuthStore();
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [message, setMessage] = useState(null);
+    const { user } = useAuthStore();
     const navigate = useNavigate();
+    const {
+        isLoading,
+        error,
+        message,
+        changeUsername,
+        requestEmailChange,
+        changePassword,
+        deleteAccount
+    } = useWebsiteFunctions();
 
     const [isUsernameDialogOpen, setIsUsernameDialogOpen] = useState(false);
     const [isEmailDialogOpen, setIsEmailDialogOpen] = useState(false);
@@ -28,65 +32,27 @@ const Settings = () => {
 
     const handleChangeUsername = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        setError(null);
-        setMessage(null);
-        try {
-            await axios.put(`${apiUrl}/api/auth/change-username`, { newUsername });
-            setMessage("Username changed successfully");
-        } catch (error) {
-            setError(error.response?.data?.message || "Error changing username");
-        } finally {
-            setIsLoading(false);
-        }
+        await changeUsername(newUsername);
     };
 
     const handleRequestEmailChange = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        setError(null);
-        setMessage(null);
-        try {
-            await axios.put(`${apiUrl}/api/auth/change-email`, { newEmail });
-            setMessage("Email change requested successfully. Please verify your new email.");
-            logout();
+        const success = await requestEmailChange(newEmail);
+        if (success) {
             navigate('/verify-email');
-        } catch (error) {
-            setError(error.message || "Error requesting email change");
-        } finally {
-            setIsLoading(false);
         }
     };
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
-        setIsLoading(true);
-        setError(null);
-        setMessage(null);
-        try {
-            //TODO:  Might implement Change password in the backend, also can use the same function as reset password
-            await axios.post(`${apiUrl}/api/auth/change-password`, { currentPassword, newPassword, confirmPassword });
-            setMessage("Password changed successfully");
-        } catch (error) {
-            setError(error.response?.data?.message || "Error changing password");
-        } finally {
-            setIsLoading(false);
-        }
+        await changePassword(currentPassword, newPassword, confirmPassword);
     };
 
     const handleDeleteAccount = async () => {
         if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-            setIsLoading(true);
-            setError(null);
-            setMessage(null);
-            try {
-                await axios.delete(`${apiUrl}/api/auth/delete-account`);
-                logout();
-                setMessage("Account deleted successfully");
-            } catch (error) {
-                setError(error.response?.data?.message || "Error deleting account");
-            } finally {
-                setIsLoading(false);
+            const success = await deleteAccount();
+            if (success) {
+                navigate('/login');
             }
         }
     };
@@ -103,7 +69,7 @@ const Settings = () => {
             >
                 <h2 className="text-6xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-pink-500
                 text-transparent bg-clip-text leading-tight pb-2 ">
-                        Settings
+                    Settings
                 </h2>
 
                 <div className="mb-6">
