@@ -1,82 +1,112 @@
-import React from 'react';
-import { useTable, useSortBy } from 'react-table';
+import React, { useState, useMemo } from 'react';
+import DataTable from 'react-data-table-component';
+import { Search } from 'lucide-react';
 
 const WebsiteTable = ({ websites }) => {
-    const columns = React.useMemo(
-        () => [
-            {
-                Header: 'Domain Name',
-                accessor: 'domainName',
-            },
-            {
-                Header: 'SSL Status',
-                accessor: 'sslStatus',
-            },
-            {
-                Header: 'Expiry Date',
-                accessor: 'expiryDate',
-                Cell: ({ value }) => value ? new Date(value).toLocaleDateString() : 'N/A',
-            },
-            {
-                Header: 'Last Checked',
-                accessor: 'lastChecked',
-                Cell: ({ value }) => new Date(value).toLocaleString(),
-            },
-            {
-                Header: 'Availability',
-                accessor: 'isAvailable',
-                Cell: ({ value }) => value ? 'Available' : 'Not Available',
-                sortType: (rowA, rowB) => {
-                    const a = rowA.original.isAvailable ? 1 : 0;
-                    const b = rowB.original.isAvailable ? 1 : 0;
-                    return a - b;
-                }
-            },
-        ],
-        []
-    );
+    const [filterText, setFilterText] = useState('');
 
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-    } = useTable({ columns, data: websites }, useSortBy);
+    const columns = [
+        {
+            name: 'Domain Name',
+            selector: row => row.domainName,
+            sortable: true,
+            width: '250px',
+            cell: row => <div className="truncate">{row.domainName}</div>,
+        },
+        {
+            name: 'SSL Status',
+            selector: row => row.sslStatus,
+            sortable: true,
+            width: '120px',
+        },
+        {
+            name: 'Expiry Date',
+            selector: row => row.expiryDate,
+            sortable: true,
+            width: '150px',
+            cell: row => row.expiryDate ? new Date(row.expiryDate).toLocaleDateString() : 'N/A',
+        },
+        {
+            name: 'Last Checked',
+            selector: row => row.lastChecked,
+            sortable: true,
+            width: '200px',
+            cell: row => new Date(row.lastChecked).toLocaleString(),
+        },
+        {
+            name: 'Availability',
+            selector: row => row.isAvailable,
+            sortable: true,
+            width: '120px',
+            cell: row => row.isAvailable ? 'Available' : 'Not Available',
+        },
+    ];
+
+    const conditionalRowStyles = [
+        {
+            when: row => !row.isAvailable,
+            style: {
+                backgroundColor: 'rgba(255, 0, 0, 0.1)',
+            },
+        },
+    ];
+
+    const filteredItems = useMemo(() => {
+        return websites.filter(item =>
+            item.domainName && item.domainName.toLowerCase().includes(filterText.toLowerCase())
+        );
+    }, [websites, filterText]);
+
+    const subHeaderComponent = useMemo(() => {
+        return (
+            <div className="relative w-full mb-4">
+                <input
+                    type="text"
+                    placeholder="Search by domain name"
+                    value={filterText}
+                    onChange={e => setFilterText(e.target.value)}
+                    className="pl-10 w-full p-2 rounded-lg"
+                />
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2" size={20} />
+            </div>
+        );
+    }, [filterText]);
+
+    const customStyles = {
+        table: {
+            style: {
+                minWidth: '840px',
+            },
+        },
+        headRow: {
+            style: {
+                backgroundColor: '#f3f4f6',
+                borderBottom: '1px solid #e5e7eb',
+            },
+        },
+        cells: {
+            style: {
+                paddingLeft: '8px',
+                paddingRight: '8px',
+            },
+        },
+    };
 
     return (
-        <table {...getTableProps()} className="min-w-full bg-white">
-            <thead>
-            {headerGroups.map(headerGroup => (
-                <tr {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map(column => (
-                        <th {...column.getHeaderProps(column.getSortByToggleProps())} className="py-2">
-                            {column.render('Header')}
-                            <span>
-                                {column.isSorted
-                                    ? column.isSortedDesc
-                                        ? ' 🔽'
-                                        : ' 🔼'
-                                    : ''}
-                            </span>
-                        </th>
-                    ))}
-                </tr>
-            ))}
-            </thead>
-            <tbody {...getTableBodyProps()}>
-            {rows.map(row => {
-                prepareRow(row)
-                return (
-                    <tr {...row.getRowProps()} className={!row.original.isAvailable ? 'bg-red-100' : ''}>
-                        {row.cells.map(cell => {
-                            return <td {...cell.getCellProps()} className="border px-4 py-2">{cell.render('Cell')}</td>
-                        })}
-                    </tr>
-                )
-            })}
-            </tbody>
-        </table>
+        <DataTable
+            columns={columns}
+            data={filteredItems}
+            pagination
+            highlightOnHover
+            striped
+            responsive
+            subHeader
+            subHeaderComponent={subHeaderComponent}
+            conditionalRowStyles={conditionalRowStyles}
+            fixedHeader
+            fixedHeaderScrollHeight="calc(100vh - 300px)"
+            customStyles={customStyles}
+        />
     );
 };
 

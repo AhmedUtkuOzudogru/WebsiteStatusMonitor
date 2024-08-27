@@ -1,6 +1,4 @@
-import React from 'react';
-import { useTable, useSortBy } from 'react-table';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useWebsiteFunctions } from "../hooks/useWebsiteFunctions.js";
 import Sidebar from '../components/Sidebar';
@@ -22,48 +20,6 @@ const Dashboard = () => {
     const handleRefresh = () => {
         updateAndFetchWebsites();
     };
-
-    const formatDateTime = (dateString) => {
-        const date = new Date(dateString);
-        return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
-    };
-
-    const columns = React.useMemo(
-        () => [
-            {
-                Header: 'Domain Name',
-                accessor: 'domainName',
-            },
-            {
-                Header: 'SSL Status',
-                accessor: 'sslStatus',
-            },
-            {
-                Header: 'Expiry Date',
-                accessor: 'expiryDate',
-                Cell: ({ value }) => value ? new Date(value).toLocaleDateString() : 'N/A',
-            },
-            {
-                Header: 'Last Checked',
-                accessor: 'lastChecked',
-                Cell: ({ value }) => formatDateTime(value),
-            },
-            {
-                Header: 'Availability',
-                accessor: 'isAvailable',
-                Cell: ({ value }) => value ? 'Available' : 'Not Available',
-            },
-        ],
-        []
-    );
-
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        rows,
-        prepareRow,
-    } = useTable({ columns, data: websites }, useSortBy);
 
     if (isLoading) {
         return (
@@ -93,7 +49,7 @@ const Dashboard = () => {
                     <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text">
                         Dashboard
                     </h2>
-                    <div className="overflow-x-auto">
+                    <div className="w-full overflow-hidden">
                         <WebsiteTable websites={websites}/>
                     </div>
                     <motion.button
