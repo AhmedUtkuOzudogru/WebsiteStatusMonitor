@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useWebsiteFunctions } from "../hooks/useWebsiteFunctions.js";
 import Sidebar from '../components/Sidebar';
 import { Loader } from "lucide-react";
+import WebsiteTable from '../components/WebsiteTable';
 
 const Dashboard = () => {
     const { websites, fetchWebsites, updateAndFetchWebsites, error, isLoading } = useWebsiteFunctions();
@@ -14,7 +15,7 @@ const Dashboard = () => {
     }, [fetchWebsites]);
 
     useEffect(() => {
-        const interval = setInterval(updateAndFetchWebsites, 120000);
+        const interval = setInterval(updateAndFetchWebsites, 5*120000);
         return () => clearInterval(interval);
     }, [updateAndFetchWebsites]);
 
@@ -93,38 +94,7 @@ const Dashboard = () => {
                         Dashboard
                     </h2>
                     <div className="overflow-x-auto">
-                        <table {...getTableProps()} className="min-w-full bg-white">
-                            <thead>
-                            {headerGroups.map(headerGroup => (
-                                <tr key={headerGroup.id} {...headerGroup.getHeaderGroupProps()}>
-                                    {headerGroup.headers.map(column => (
-                                        <th key={column.id} {...column.getHeaderProps(column.getSortByToggleProps())} className="py-2">
-                                            {column.render('Header')}
-                                            <span>
-                                                {column.isSorted
-                                                    ? column.isSortedDesc
-                                                        ? ' 🔽'
-                                                        : ' 🔼'
-                                                    : ''}
-                                            </span>
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                            </thead>
-                            <tbody {...getTableBodyProps()}>
-                            {rows.map(row => {
-                                prepareRow(row)
-                                return (
-                                    <tr key={row.id} {...row.getRowProps()}>
-                                        {row.cells.map(cell => {
-                                            return <td key={cell.id} {...cell.getCellProps()} className="border px-4 py-2">{cell.render('Cell')}</td>
-                                        })}
-                                    </tr>
-                                )
-                            })}
-                            </tbody>
-                        </table>
+                        <WebsiteTable websites={websites}/>
                     </div>
                     <motion.button
                         whileHover={{scale: 1.05}}
