@@ -3,12 +3,14 @@ import { motion } from 'framer-motion';
 import { useWebsiteFunctions } from "../hooks/useWebsiteFunctions.js";
 import Sidebar from '../components/Sidebar';
 import { Loader } from "lucide-react";
+import CsvImport from '../components/CsvImport';
+
 
 const AddWebsite = () => {
     const [domainName, setDomainName] = useState('');
     const { addWebsite, isLoading, error } = useWebsiteFunctions();
 
-    const handleSubmit = async (e) => {
+        const handleSubmit = async (e) => {
         e.preventDefault();
         await addWebsite({ domainName });
         setDomainName('');
@@ -35,8 +37,8 @@ const AddWebsite = () => {
                         className="w-full p-2 mb-4 rounded-lg"
                     />
                     <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{scale: 1.05}}
+                        whileTap={{scale: 0.95}}
                         type="submit"
                         className='w-full mt-4 py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white
                         font-bold rounded-lg shadow-lg hover:from-blue-600 hover:to-blue-700
@@ -46,6 +48,10 @@ const AddWebsite = () => {
                         {isLoading ? <Loader className='animate-spin mx-auto' size={24}/> : 'Add Website'}
                     </motion.button>
                 </form>
+                <div className="mt-8">
+                    <h3 className="text-xl font-bold mb-4 text-white">Import from CSV</h3>
+                    <CsvImport />
+                </div>
                 {error && <p className="text-red-500 mt-4">{error}</p>}
             </motion.div>
         </div>
