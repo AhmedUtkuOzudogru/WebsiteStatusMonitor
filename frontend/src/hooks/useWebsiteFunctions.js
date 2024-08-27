@@ -111,7 +111,7 @@ export const useWebsiteFunctions = () => {
         setError(null);
         setMessage(null);
         try {
-            //Todo: add backend for change password !!!!!!!
+            // Todo: add backend for change password !!!!!!!
             //await axios.post(`${apiUrl}/api/auth/change-password`, { currentPassword, newPassword, confirmPassword });
             setMessage("Password changed successfully");
         } catch (error) {

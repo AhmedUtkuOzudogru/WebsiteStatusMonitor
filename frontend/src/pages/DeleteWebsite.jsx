@@ -1,4 +1,3 @@
-// DeleteWebsite.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useWebsiteFunctions } from "../hooks/useWebsiteFunctions.js";
