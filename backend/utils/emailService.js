@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import {
     PASSWORD_RESET_REQUEST_TEMPLATE,
     PASSWORD_RESET_SUCCESS_TEMPLATE,
-    VERIFICATION_EMAIL_TEMPLATE
+    VERIFICATION_EMAIL_TEMPLATE, WEBSITE_DOWN_WARNING_TEMPLATE
 } from "../emailTemplates/emailTemplates.js";
 
 dotenv.config();
@@ -72,4 +72,20 @@ export const sendResetPasswordSuccessEmail = async (email) => {
         throw new Error('Failed to reset password confirmation email');
     }
 
+};
+export const sendWebsiteDownWarningEmail = async (email, domainName) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Warning: Your Website is Down',
+        html: WEBSITE_DOWN_WARNING_TEMPLATE(domainName)
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Website down warning email sent successfully');
+    } catch (error) {
+        console.error('Error sending website down warning email:', error);
+        throw new Error('Failed to send website down warning email');
+    }
 };
