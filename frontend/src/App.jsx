@@ -1,5 +1,5 @@
 import React, {useEffect} from "react";
-import {Routes, Route, Navigate} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import BackgroundShape from "./components/BackgroundShape.jsx";
 import LoadingAnimation from "./components/LoadingAnimation.jsx";
 import SignUp from "./pages/SignUp.jsx";
