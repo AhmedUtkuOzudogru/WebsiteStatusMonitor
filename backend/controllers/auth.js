@@ -139,8 +139,8 @@ export const forgotPassword = async (req, res) => {
         //TODO: sendPasswordResetEmail function
         //If you are not running on the dev environment (the case you start the server and frontend with npm run dev separately)
         // in order to see the forgot password email link that is being sent your email, you need to change the API_URL in the following command:  sendPasswordResetEmail
-        // to process.env.CLIENT_URL, i know why it happens but the solution at the time of writing this code so you have to
-        //change this manually :(
+        // to process.env.CLIENT_URL, i know why it happens (different ports server:5000 vite:5173 i use cors for cross-origin resource sharing) but not  the solution at the time of writing this code so you have to
+        //change this manually :( or edit the url that is being sent to your email to the correct one
         await sendPasswordResetEmail(user.email, `${process.env.API_URL}/reset-password/${resetToken}`);
 
         res.status(200).json({ success: true, message: "Reset password sent successfully" });
