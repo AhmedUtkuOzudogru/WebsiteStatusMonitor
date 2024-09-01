@@ -1,5 +1,5 @@
 {
-  "name": "domianchecker",
+  "name": "websitestatusmonitor",
   "version": "1.0.0",
   "main": "backend/index.js",
   "scripts": {

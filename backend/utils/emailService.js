@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import {
     PASSWORD_RESET_REQUEST_TEMPLATE,
     PASSWORD_RESET_SUCCESS_TEMPLATE,
-    VERIFICATION_EMAIL_TEMPLATE, WEBSITE_DOWN_WARNING_TEMPLATE
+    VERIFICATION_EMAIL_TEMPLATE,
+    WEBSITE_DOWN_WARNING_TEMPLATE
 } from "../emailTemplates/emailTemplates.js";
 
 dotenv.config();
